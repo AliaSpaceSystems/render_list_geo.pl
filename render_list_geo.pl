@@ -5,7 +5,7 @@ use Getopt::Std;
 use Math::Trig;
 
 my $options = {};
-getopts("n:l:m:s:t:fx:X:y:Y:z:Z:h", $options);
+getopts("n:l:m:d:s:t:fx:X:y:Y:z:Z:h", $options);
 
 if ($options->{h}) {
   print "options: (x,X,y,Y,z,Z - required, no checks, small letters should be less)\n";
@@ -18,11 +18,13 @@ if ($options->{h}) {
   print "  -x <x>, -X <x> start and end longitude (in geographic coordinates, WGS84)\n";
   print "  -y <y>, -Y <y> start and end latitude (in geographic coordinates, WGS84)\n";
   print "  -z <z>, -Z <z> start and end level value\n";
+  print "  -d <docker id> docker container id\n";
   print "\n";
   exit;
 }
 
 my ($z, $Z);
+
 my $bulkSize=8;
 if (($options->{x} || $options->{x}==0) &&
     ($options->{X} || $options->{X}==0) &&
@@ -56,7 +58,8 @@ if (($options->{x} || $options->{x}==0) &&
         if ($options->{f}) {$cmd = $cmd." -f ".$options->{f}};
 	if ($options->{s}) {$cmd = $cmd." -s ".$options->{s}};
 	if ($options->{t}) {$cmd = $cmd." -t ".$options->{t}};
-  print $cmd."\n";
+    if ($options->{d}) {$cmd = "docker exec ".$options->{d}." ".$cmd};
+    print $cmd."\n";
 	system($cmd);
 	print("\nZoom factor: ".$iz." finished at\n");
 	system("date");
